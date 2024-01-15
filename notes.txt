@@ -1,0 +1,395 @@
+import { Fragment } from "react";
+import { MouseEvent } from "react"; //type anotation for specify the type of object
+we get type safety auto completion , easier to refactor code in typescript
+
+items = []
+items.map(items => <li>{items}</li>) take each item and convert it to an li
+we use {} for rendering data dynamicaly
+jsx markup allow html element , other react components
+event handler - handling the complex events of jsx markup outside it.
+const handleClick = (event: MouseEvent) => console.log(event); //outside for JSX amrkup event is unfamilaer
+usestate function is called a hook - allows us to tap into builtin features in react
+
+with react we don't need to manipulate DOM directly , every component
+has a state and that can change , when the state of  acomponent changes
+react will update the dom to match the new component state.
+
+
+how react works - a virtual DOM - JS datas tructure
+A light weight in-memory representation of our
+component tree where each node represents a component or properties
+when the state or data of a compoent changes React update a 
+corresponing node in virtual DOM to reflect the new state and then 
+upadte thode node in that tree.
+
+React ecosystem 
+React is a JS library for creating user interfaces
+In contarst to react we have other tools like angular and view
+these are frameworks
+Library - A tool that provide specific functionality. It's like a tool
+for building user interfaces.We need more tools to build an application
+in real world i.e. Routing - allowing the user to go from one page to another
+, making HTTP call , managing app state , Internationalization , 
+Form validation , aminations , etc
+Framework  - A set of tools and guildelines for building apps. It's like a tool set.
+
+
+
+props - using props we can pass data to our component
+
+chrome developer tools are there when we inspect a page
+
+Props -                                 State -
+
+Input passed to a component             Data managed by a component
+Similar to function args                Similar to local variables
+Immutable                               Mutable
+Cause a re-render                       Cause a re-render
+
+
+hmr - hot module replacement
+
+cohesion - things that are related should be next to each other and things that are unrelated should be seprated.
+
+css Module - A css module is a css class in which all the class names are scoped locallly just like a JS module.
+So they allow us to use the same css class names in diffrenet files withot worring about the name clashes.
+
+css in JS - We can write all the styles for a component next to it's defination in a JS/TS file.
+this gives us a number of benefits - Scoped styles(no name conflicts), All the css & JS/TS code in one place,
+easier to delete a component, easier to style based on props/state.
+
+Libraries to implement this - 1.Styled components, 2.Emotion, 3.polished , etc.
+
+For styles we no longer use className instead we create a react compoenent that has all the styles want.
+
+JSX: javascript XML
+
+App.tsx -
+
+import { useState } from "react";
+import Alert from "./components/Alert";
+import Button from "./components/Button";
+import ListGroup from "./components/ListGroup";
+import { AiFillCrown } from "react-icons/ai";
+function App() {
+  // const [alertVisible, setAlertVisible ]=useState(false);
+  const items = ['New York','Los Angeles','Sanfrasysco','Zimbabe','UK']
+  return (
+    <div>
+      {alertVisible && <Alert onClose={()=> setAlertVisible(false)}/>}
+      <Button color ="primary" onClick={() => setAlertVisible(true)}>My button</Button> }
+      <ListGroup heading="Miami" items={items} onSelectItem={()=>console.log("selected")}></ListGroup>
+      <AiFillCrown color="Yellow" size="700" />
+    </div>
+  );
+}
+
+export default App;
+
+Managing Component State
+
+1. React update state asynchronusly(not immediatly)
+2. State is actually stored outside of the component
+
+Why state not variable is used ? 
+beacuse in JS a variable inside a function are scoped to that function.When the
+component finishes execution our local variable is going to be removed from the 
+memory , so next time react re-render this component is going to call the
+function again so variable update will be lost. So we use the state to store the 
+state outside the component
+
+3. Use hooks only on the top level on the component.
+
+Best Practice -
+
+1. avoid redundant state variable.
+2. Group related variables inside an object.
+3. Avoid deeply nested structures.
+
+Pure function - give the same input get the same result everytime.
+
+Props -> component -> JSX
+
+passing props to a compotnent should produce same JSX everytime.
+Mantaining this avoid re-rendering of a component.
+
+Strict Mode in react - Use to catch potential problems like impure Props.
+When a strict mode is enabled in development react render each component 
+twice. In production strict mode is not included and our react component is rendered once.
+
+
+Updating Objects - we should treat state object as immutable and readonly.
+If we want to change their value we have to give a brand new object. 
+
+Updating Array  we use fillter , map ,etc functions. We don't need to create 
+brand new object of every element of an array, we only need to do this for
+elements that we are modifing.
+
+Simplifying Update Logic with Immer
+
+import { useState } from "react";
+import produce from "immer";
+
+function App() {
+  const [bugs, setBugs] = useState([
+    { id: 1, title: "Bug 1", fixed: false },
+    { id: 2, title: "Bug 2", fixed: false },
+  ]);
+
+  const handleClick = () => {
+      setBugs(bugs.map(bug => bug.id === 1 ? {...bug, fixed: true}:bug));
+  };
+
+  return (
+    <div>
+      {bugs.map((bug) => (
+        <p key={bug.id}>
+          {" "}
+          {bug.title} {bug.fixed ? "fixed" : "New"}
+        </p>
+      ))}
+      <button onClick={handleClick}>Click Me</button>
+    </div>
+  );
+}
+
+export default App;
+
+FORM -
+By default when we submit a HTML form that form is posted to a server then 
+we get a full page reload, so whenever I submit a form if I console.log
+something on the console that will desapere within a second.
+
+PreventDefault() funtion is use to prevent this default action.
+
+DOM is created after react render our component
+
+useRef - 
+import { FormEvent, useRef } from "react";
+
+const Form = () => {
+  const nameRef = useRef<HTMLInputElement>(null);
+  const ageRef =  useRef<HTMLInputElement>(null);
+  const person = {name: '', age: 0};
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    if(nameRef.current !== null)
+      person.name = nameRef.current.value;
+    if(ageRef.current !== null){
+      person.age = parseInt(ageRef.current.value);
+    }
+    console.log(person);
+    
+  }
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mb-3">
+        <label  htmlFor="name" className="form-label">
+          Name
+        </label>
+        <input ref={nameRef} id="name" type="text" className="form-control" />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="age" className="form-label">
+          Age
+        </label>
+        <input ref={ageRef} id="age" type="number" className="form-control" />
+      </div>
+      <button className="btn btn-primary">Submit</button>
+    </form>
+  );
+};
+
+export default Form;
+
+Instead of useRef when we use useState - evey input has a change event
+ that triggers everytime thw user type a key Struck.So we can handel this 
+ event and update our state variable everytime a user enter a value in form
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
