@@ -1,6 +1,11 @@
-# React + TypeScript + Vite
+# Expense Traker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A website built in React JS , Typescript and bootstrap. Use to manage expenses.
+
+## User Interface of website
+
+![Expense Traker UI](https://github.com/NimishaRawat/ExpenseTraker/assets/76105207/face6ed3-17a7-4161-bbc1-9d3a0e43f302)
+
 
 Currently, two official plugins are available:
 
